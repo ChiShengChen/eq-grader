@@ -59,109 +59,7 @@
   </div>
 </div>
 
-{% if self_reflection or scores %}
-<div class="section">
-  <div class="section-title">&#x1F50D; AI 分析（僅老師可見）</div>
-
-  {% if self_reflection %}
-  <div class="card">
-    <h3>學生自我反思（AI 模擬）</h3>
-    <div class="detail-grid">
-      <div class="detail-item">
-        <div class="detail-label">信心程度</div>
-        <div class="detail-value">{{ self_reflection.confidence | default('-') }}</div>
-      </div>
-      <div class="detail-item">
-        <div class="detail-label">覺得最難的部分</div>
-        <div class="detail-value">{{ self_reflection.perceived_difficulty | default('-') }}</div>
-      </div>
-      <div class="detail-item">
-        <div class="detail-label">自我評價</div>
-        <div class="detail-value">{{ self_reflection.self_assessment | default('-') }}</div>
-      </div>
-      <div class="detail-item">
-        <div class="detail-label">不確定的欄位</div>
-        <div class="detail-value">
-          {% if self_reflection.uncertain_parts %}
-            {{ self_reflection.uncertain_parts | join(', ') }}
-          {% else %}
-            -
-          {% endif %}
-        </div>
-      </div>
-    </div>
-  </div>
-  {% endif %}
-
-  {% if scores %}
-  <div class="card">
-    <h3>評分結果</h3>
-    <div style="margin-bottom: 12px;">
-      整體品質：
-      {% set quality = scores.overall_quality | default('') %}
-      {% if quality == "優秀" %}
-        <span class="badge badge-success">{{ quality }}</span>
-      {% elif quality == "良好" %}
-        <span class="badge badge-info">{{ quality }}</span>
-      {% elif quality == "普通" %}
-        <span class="badge badge-muted">{{ quality }}</span>
-      {% else %}
-        <span class="badge badge-warning">{{ quality }}</span>
-      {% endif %}
-    </div>
-
-    {% if scores.scores is defined %}
-    {% set dim_names = {"completeness": "完整性", "correctness": "正確性", "depth": "深度", "expression": "表達", "appropriateness": "適切性"} %}
-    {% for key, label in dim_names.items() %}
-      {% set val = scores.scores[key] | default(0) %}
-      <div class="score-row">
-        <div class="score-label">{{ label }}</div>
-        <div class="score-bar-bg">
-          <div class="score-bar" style="width: {{ val * 20 }}%;"></div>
-        </div>
-        <div class="score-value">{{ val }}/5</div>
-      </div>
-    {% endfor %}
-    {% endif %}
-
-    {% if scores.strengths is defined and scores.strengths %}
-    <div style="margin-top: 16px;">
-      <strong>&#x2705; 優點</strong>
-      <div class="badge-list">
-        {% for s in scores.strengths %}
-        <span class="badge badge-success">{{ s }}</span>
-        {% endfor %}
-      </div>
-    </div>
-    {% endif %}
-
-    {% if scores.weaknesses is defined and scores.weaknesses %}
-    <div style="margin-top: 10px;">
-      <strong>&#x26A0;&#xFE0F; 需改進</strong>
-      <div class="badge-list">
-        {% for w in scores.weaknesses %}
-        <span class="badge badge-warning">{{ w }}</span>
-        {% endfor %}
-      </div>
-    </div>
-    {% endif %}
-
-    {% if scores.error_analysis is defined and scores.error_analysis %}
-    <div style="margin-top: 10px;">
-      <strong>錯誤分析：</strong>{{ scores.error_analysis }}
-    </div>
-    {% endif %}
-
-    {% if scores.suggestions is defined and scores.suggestions %}
-    <div style="margin-top: 10px;">
-      <strong>改進建議：</strong>{{ scores.suggestions }}
-    </div>
-    {% endif %}
-  </div>
-  {% endif %}
-</div>
-{% endif %}
-
+{# === AI 評語（移到前面，老師先看評語再看分析） === #}
 <div class="section">
   <div class="section-title">&#x1F4AC; AI 評語</div>
   <div class="card">
@@ -191,4 +89,113 @@
     {% endif %}
   </div>
 </div>
+
+{# === AI 分析（預設收合，點擊展開） === #}
+{% if self_reflection or scores %}
+<div class="section">
+  <details class="ai-analysis-details">
+    <summary class="section-title section-title--collapsible">
+      &#x1F50D; AI 分析（僅老師可見）
+      <span class="collapse-hint">點擊展開</span>
+    </summary>
+
+    {% if self_reflection %}
+    <div class="card" style="margin-top: 12px;">
+      <h3>學生自我反思（AI 模擬）</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-label">信心程度</div>
+          <div class="detail-value">{{ self_reflection.confidence | default('-') }}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">覺得最難的部分</div>
+          <div class="detail-value">{{ self_reflection.perceived_difficulty | default('-') }}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">自我評價</div>
+          <div class="detail-value">{{ self_reflection.self_assessment | default('-') }}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">不確定的欄位</div>
+          <div class="detail-value">
+            {% if self_reflection.uncertain_parts %}
+              {{ self_reflection.uncertain_parts | join(', ') }}
+            {% else %}
+              -
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if scores %}
+    <div class="card" style="margin-top: 12px;">
+      <h3>評分結果</h3>
+      <div style="margin-bottom: 12px;">
+        整體品質：
+        {% set quality = scores.overall_quality | default('') %}
+        {% if quality == "優秀" %}
+          <span class="badge badge-success">{{ quality }}</span>
+        {% elif quality == "良好" %}
+          <span class="badge badge-info">{{ quality }}</span>
+        {% elif quality == "普通" %}
+          <span class="badge badge-muted">{{ quality }}</span>
+        {% else %}
+          <span class="badge badge-warning">{{ quality }}</span>
+        {% endif %}
+      </div>
+
+      {% if scores.scores is defined %}
+      {% set dim_names = {"completeness": "完整性", "correctness": "正確性", "depth": "深度", "expression": "表達", "appropriateness": "適切性"} %}
+      {% for key, label in dim_names.items() %}
+        {% set val = scores.scores[key] | default(0) %}
+        <div class="score-row">
+          <div class="score-label">{{ label }}</div>
+          <div class="score-bar-bg">
+            <div class="score-bar" style="width: {{ val * 20 }}%;"></div>
+          </div>
+          <div class="score-value">{{ val }}/5</div>
+        </div>
+      {% endfor %}
+      {% endif %}
+
+      {% if scores.strengths is defined and scores.strengths %}
+      <div style="margin-top: 16px;">
+        <strong>&#x2705; 優點</strong>
+        <div class="badge-list">
+          {% for s in scores.strengths %}
+          <span class="badge badge-success">{{ s }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if scores.weaknesses is defined and scores.weaknesses %}
+      <div style="margin-top: 10px;">
+        <strong>&#x26A0;&#xFE0F; 需改進</strong>
+        <div class="badge-list">
+          {% for w in scores.weaknesses %}
+          <span class="badge badge-warning">{{ w }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if scores.error_analysis is defined and scores.error_analysis %}
+      <div style="margin-top: 10px;">
+        <strong>錯誤分析：</strong>{{ scores.error_analysis }}
+      </div>
+      {% endif %}
+
+      {% if scores.suggestions is defined and scores.suggestions %}
+      <div style="margin-top: 10px;">
+        <strong>改進建議：</strong>{{ scores.suggestions }}
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </details>
+</div>
+{% endif %}
 {% endblock %}
