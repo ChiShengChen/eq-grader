@@ -1,6 +1,9 @@
 from sqlmodel import SQLModel, Session, create_engine
 from app.config import settings
 
+# Import all models so SQLModel.metadata knows about them
+from app.models import StudentSubmission, AIEvaluation, User, LoginRecord  # noqa: F401
+
 engine = create_engine(settings.database_url, echo=False)
 
 
