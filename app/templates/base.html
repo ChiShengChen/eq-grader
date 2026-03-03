@@ -13,6 +13,17 @@
       <div class="nav-links">
         <a href="/">&#x1F4DD; 學生</a>
         <a href="/teacher">&#x1F468;&#x200D;&#x1F3EB; 老師</a>
+        {% if request.session and request.session.get('user_id') %}
+          <span class="nav-user">
+            {% if request.session.get('user_avatar') %}
+              <img src="{{ request.session.get('user_avatar') }}" alt="" class="nav-avatar">
+            {% endif %}
+            {{ request.session.get('user_name', '') }}
+          </span>
+          <a href="/logout" class="nav-logout">登出</a>
+        {% elif oauth_enabled is defined and oauth_enabled %}
+          <a href="/login" class="btn btn-sm btn-primary nav-login-btn">Google 登入</a>
+        {% endif %}
       </div>
     </div>
   </nav>

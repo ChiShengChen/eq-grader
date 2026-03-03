@@ -274,3 +274,52 @@ footer {
   .nav, .btn, footer, .loading-overlay { display: none; }
   .card { box-shadow: none; border: 1px solid #ccc; }
 }
+
+/* === Collapsible AI Analysis === */
+.ai-analysis-details { border: none; }
+.ai-analysis-details > summary { list-style: none; cursor: pointer; }
+.ai-analysis-details > summary::-webkit-details-marker { display: none; }
+.section-title--collapsible {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.section-title--collapsible:hover { color: var(--primary); }
+.collapse-hint {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-light);
+  padding: 2px 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+.ai-analysis-details[open] .collapse-hint { display: none; }
+
+/* === Auth / Nav User === */
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 600;
+}
+.nav-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.nav-logout {
+  font-size: 13px;
+  color: var(--text-light) !important;
+  padding: 2px 8px;
+}
+.nav-login-btn {
+  padding: 6px 16px !important;
+  font-size: 13px !important;
+  color: #fff !important;
+  text-decoration: none !important;
+}

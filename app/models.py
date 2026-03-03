@@ -33,6 +33,32 @@ class AIEvaluation(SQLModel, table=True):
     created_at: Optional[datetime] = Field(default_factory=datetime.now)
 
 
+class User(SQLModel, table=True):
+    __tablename__: ClassVar[str] = "user"
+
+    id: str | None = Field(default_factory=lambda: str(uuid4()), primary_key=True)
+    google_id: str = Field(default="", index=True, unique=True)
+    email: str = ""
+    name: str = ""
+    avatar_url: str = ""
+    role: str = "teacher"  # teacher / admin
+    created_at: Optional[datetime] = Field(default_factory=datetime.now)
+    last_login: Optional[datetime] = None
+
+
+class LoginRecord(SQLModel, table=True):
+    __tablename__: ClassVar[str] = "login_record"
+
+    id: str | None = Field(default_factory=lambda: str(uuid4()), primary_key=True)
+    user_id: str = Field(default="", foreign_key="user.id")
+    email: str = ""
+    ip_address: str = ""
+    user_agent: str = ""
+    login_at: Optional[datetime] = Field(default_factory=datetime.now)
+
+
+# --- Pydantic schemas (API responses) ---
+
 class SubmissionCreate(BaseModel):
     questionnaire_id: str
     student_name: str
