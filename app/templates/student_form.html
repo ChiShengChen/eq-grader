@@ -11,6 +11,13 @@
   <h1>&#x1F44B; 歡迎來到EQ練功房！</h1>
   <p>請選擇一個練習開始吧</p>
 </div>
+
+<div class="card" style="background: #fff7e6; border-color: #f59e0b;">
+  <p><strong>提醒：</strong>本系統目前為<strong>非公開</strong>、實驗探索性質階段。</p>
+  <p>使用者操作會留下紀錄，請勿上傳包含敏感個資的內容。</p>
+  <p>如有問題，請聯繫 LINE ID：<strong>jenghanhsieh</strong></p>
+</div>
+
 <div class="card-grid">
   {% for q_id, q in questionnaires.items() %}
   <a href="/questionnaire/{{ q_id }}" class="card-link">
