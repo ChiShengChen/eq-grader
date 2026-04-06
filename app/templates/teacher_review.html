@@ -5,12 +5,17 @@
 <div class="page-header">
   <h1>{{ submission.student_name }} 的 {{ questionnaire_name }}</h1>
   <p>提交時間：{{ submission.created_at.strftime('%Y/%m/%d %H:%M') }}
-    {% if evaluation and evaluation.reviewed_by_teacher %}
+    {% if submission.status == "grading" %}
+      <span class="badge badge-warning">重新批改中</span>
+    {% elif evaluation and evaluation.reviewed_by_teacher %}
       <span class="badge badge-success">已審閱</span>
     {% else %}
       <span class="badge badge-muted">未審閱</span>
     {% endif %}
   </p>
+  {% if submission.status == "grading" %}
+  <p style="margin-top: 10px; color: var(--text-light); font-size: 15px;">正在以目前系統設定的模型重新批改，完成後請重新整理頁面。</p>
+  {% endif %}
 </div>
 
 <div class="section">
@@ -66,9 +71,9 @@
     {% if evaluation %}
     <div class="teacher-comment">{{ evaluation.teacher_comment }}</div>
 
-    {% if evaluation.teacher_override %}
+    {% if evaluation.teacher_override and evaluation.reviewed_by_teacher %}
     <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
-      <strong>&#x270F;&#xFE0F; 老師修改後的評語：</strong>
+      <strong>&#x270F;&#xFE0F; 老師修改後的評語（學生目前看到）：</strong>
       <div class="teacher-comment" style="margin-top: 8px;">{{ evaluation.teacher_override }}</div>
     </div>
     {% endif %}
@@ -79,11 +84,17 @@
         <textarea name="teacher_comment" class="form-textarea"
                   placeholder="如果想修改 AI 的評語，可以在這裡寫你的版本...">{{ evaluation.teacher_override | default('') }}</textarea>
       </div>
-      <div style="display: flex; gap: 10px;">
-        <button type="submit" class="btn btn-primary">&#x1F4BE; 儲存修改</button>
-        <a href="/teacher" class="btn btn-secondary">&#x2190; 返回列表</a>
-      </div>
+      <button type="submit" class="btn btn-primary">&#x1F4BE; 儲存修改</button>
     </form>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 16px;">
+      {% if (evaluation.reviewed_by_teacher and submission.status == "completed") or submission.status == "error" %}
+      <form action="/teacher/{{ submission.id }}/regrade" method="POST" style="display: inline; margin: 0;"
+            onsubmit="return confirm({% if submission.status == "error" %}'先前 AI 批改失敗。確定要以目前系統設定的模型再試一次？\n\n若「修改評語」欄有內容，先前的錯誤訊息會附錄在末端；成功後會寫入新的評分與評語。'{% else %}'確定要以目前系統設定的模型重新批改？\n\n先前的 AI 評語將附錄在「修改評語」欄位末端；新的評分與 AI 評語會覆蓋目前畫面上的結果，且審閱狀態會改為未審閱，直到您再次儲存。'{% endif %});">
+        <button type="submit" class="btn btn-secondary">&#x1F504; 重新批改</button>
+      </form>
+      {% endif %}
+      <a href="/teacher" class="btn btn-secondary">&#x2190; 返回列表</a>
+    </div>
     {% else %}
     <p style="color: var(--text-light);">尚無評估資料</p>
     {% endif %}

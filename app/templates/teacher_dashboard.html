@@ -67,7 +67,15 @@
             {% endif %}
           </td>
           <td>
-            <a href="/teacher/{{ item.submission.id }}" class="btn btn-sm btn-secondary">查看詳情</a>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
+              <a href="/teacher/{{ item.submission.id }}" class="btn btn-sm btn-secondary">查看詳情</a>
+              {% if (item.reviewed and item.submission.status == "completed") or item.submission.status == "error" %}
+              <form action="/teacher/{{ item.submission.id }}/regrade" method="POST" style="display: inline; margin: 0;"
+                    onsubmit="return confirm({% if item.submission.status == "error" %}'先前 AI 批改失敗。確定要以目前系統設定的模型再試一次？\n\n若「修改評語」欄有內容，先前的錯誤訊息會附錄在末端；成功後會寫入新的評分與評語。'{% else %}'確定要以目前系統設定的模型重新批改？\n\n先前的 AI 評語將附錄在「修改評語」欄位末端；新的評分與 AI 評語會覆蓋目前結果。'{% endif %});">
+                <button type="submit" class="btn btn-sm btn-secondary">重新批改</button>
+              </form>
+              {% endif %}
+            </div>
           </td>
         </tr>
         {% endfor %}
